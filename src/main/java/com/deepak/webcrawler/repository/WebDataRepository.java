@@ -7,6 +7,10 @@ import org.springframework.stereotype.Repository;
 
 import com.deepak.webcrawler.entity.WebData;
 
+/**
+ * @author Deepak
+ *
+ */
 @Repository
 public interface WebDataRepository extends JpaRepository<WebData, Long> {
 

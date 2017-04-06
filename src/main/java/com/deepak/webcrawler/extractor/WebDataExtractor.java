@@ -18,15 +18,20 @@ import org.springframework.context.annotation.Configuration;
 import com.deepak.webcrawler.entity.WebData;
 import com.deepak.webcrawler.entity.WebLink;
 
+/**
+ * @author Deepak
+ *
+ */
 @Configuration
 public class WebDataExtractor {
 
     private static final Logger LOG = LoggerFactory.getLogger(WebDataExtractor.class);
 
     public WebData extract(final String url) {
-        WebData webData = new WebData();
+        WebData webData = null;
         Document doc;
         try {
+            webData = new WebData();
             doc = Jsoup.connect(url)
                        .get();
 
@@ -75,31 +80,37 @@ public class WebDataExtractor {
         webData.setWebLinks(webLinks);
     }
 
-    public void createWebLink(final String url, Set<WebLink> webLinks, UrlValidator validate, final Element element) {
+    private void createWebLink(final String url, Set<WebLink> webLinks, UrlValidator validate, final Element element) {
         WebLink webLink = new WebLink();
-        if (validateElementAnchorHref(element)) {
+        if (validateElementAnchorHref(element.attr("href"))) {
             if (element.attr("href")
                        .contains(url)) {
                 validateAndSetWebLinkUrl(validate, element, webLink);
+                addWebLinkToWebDatasWebLinks(webLinks, webLink);
             } else if (element.attr("href")
                               .contains("http:")) {
                 validateAndSetWebLinkUrl(validate, element, webLink);
+                addWebLinkToWebDatasWebLinks(webLinks, webLink);
             } else {
                 LOG.info("Extracted URL: " + url.concat(element.attr("href")));
                 webLink.setUrl(url.concat(element.attr("href")));
+                addWebLinkToWebDatasWebLinks(webLinks, webLink);
             }
         }
-        LOG.info("Adding WebLink to Set");
+    }
+
+    private void addWebLinkToWebDatasWebLinks(Set<WebLink> webLinks, final WebLink webLink) {
+        LOG.info("Adding WebLink: " + webLink.getUrl());
         webLinks.add(webLink);
     }
 
-    public boolean validateElementAnchorHref(final Element i) {
-        return i.attr("href") != null && !i.attr("href")
-                                           .trim()
-                                           .isEmpty()
-                && !i.attr("href")
-                     .trim()
-                     .equals("/");
+    public boolean validateElementAnchorHref(String href) {
+        return href != null && !href.trim()
+                                    .isEmpty()
+                && !href.trim()
+                        .equals("/")
+                && !href.toLowerCase()
+                        .startsWith("javascript:");
     }
 
     private void validateAndSetWebLinkUrl(UrlValidator validate, Element element, WebLink webLink) {

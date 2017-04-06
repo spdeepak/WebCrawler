@@ -14,6 +14,10 @@ import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.OneToMany;
 
+/**
+ * @author Deepak
+ *
+ */
 @Entity
 public class WebData {
 
@@ -22,6 +26,7 @@ public class WebData {
     private long id;
 
     @Column(unique = true)
+    @Lob
     private String url;
 
     private String title;

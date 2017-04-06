@@ -7,6 +7,10 @@ import org.springframework.stereotype.Repository;
 
 import com.deepak.webcrawler.entity.WebLink;
 
+/**
+ * @author Deepak
+ *
+ */
 @Repository
 public interface WebLinkRepository extends JpaRepository<WebLink, Long> {
 
