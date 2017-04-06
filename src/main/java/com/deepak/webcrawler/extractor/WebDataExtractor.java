@@ -13,20 +13,15 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 
 import com.deepak.webcrawler.entity.WebData;
 import com.deepak.webcrawler.entity.WebLink;
-import com.deepak.webcrawler.repository.WebLinkRepository;
 
 @Configuration
 public class WebDataExtractor {
 
     private static final Logger LOG = LoggerFactory.getLogger(WebDataExtractor.class);
-
-    @Autowired
-    private WebLinkRepository webLinkRepository;
 
     public WebData extract(final String url) {
         WebData webData = new WebData();

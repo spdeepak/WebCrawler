@@ -1,6 +1,5 @@
 package com.deepak.webcrawler;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
@@ -26,10 +25,8 @@ public class WebCrawler {
     private WebDataExtractor webDataExtractor;
 
     private boolean findWebLinksToCrawl() {
-        List<WebLink> webLinks = new ArrayList<>();
-        webLinkRepository.findAll()
-                         .forEach(webLinks::add);
-        return webLinks.isEmpty();
+        return webLinkRepository.findAll()
+                                .isEmpty();
     }
 
     public void start() {
