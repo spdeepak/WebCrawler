@@ -2,7 +2,6 @@ package com.deepak.webcrawler.entity;
 
 import java.util.HashSet;
 import java.util.Set;
-import java.util.concurrent.ConcurrentSkipListSet;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -31,7 +30,7 @@ public class WebData {
     private Set<String> metDataKeyWords = new HashSet<>();
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    private Set<WebLink> webLinks = new ConcurrentSkipListSet<>();
+    private Set<WebLink> webLinks = new HashSet<>();
 
     public long getId() {
         return id;

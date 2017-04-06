@@ -1,13 +1,15 @@
 package com.deepak.webcrawler.repository;
 
-import org.springframework.data.repository.CrudRepository;
+import java.util.List;
+
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import com.deepak.webcrawler.entity.WebLink;
 
 @Repository
-public interface WebLinkRepository extends CrudRepository<WebLink, Long> {
+public interface WebLinkRepository extends JpaRepository<WebLink, Long> {
 
-    WebLink findByUrl(String url);
+    List<WebLink> findByUrl(String url);
 
 }

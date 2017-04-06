@@ -45,9 +45,11 @@ public class WebCrawler {
     }
 
     private void continueExtraction() {
-        Iterable<WebLink> webLinks = webLinkRepository.findAll();
-        for (WebLink webLink : webLinks) {
-            extract(webLink.getUrl());
+        WebLink wl = null;
+        List<WebLink> webLinks = webLinkRepository.findAll();
+        if (!webLinks.isEmpty()) {
+            wl = webLinks.get(0);
+            extract(wl.getUrl());
         }
     }
 
@@ -55,11 +57,15 @@ public class WebCrawler {
         if (webDataRepository.findByUrl(url) == null) {
             WebData webData = webDataExtractor.extract(url);
             webDataRepository.save(webData);
-            WebLink webLink = webLinkRepository.findByUrl(url);
-            if (webLink != null) {
-                webLinkRepository.delete(webLink);
-            }
+            deleteWebLinkAfterWebDataExtraction(url);
             continueExtraction();
+        }
+    }
+
+    public void deleteWebLinkAfterWebDataExtraction(String url) {
+        List<WebLink> webLinks = webLinkRepository.findByUrl(url);
+        if (!webLinks.isEmpty()) {
+            webLinkRepository.delete(webLinks);
         }
     }
 

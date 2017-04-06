@@ -32,6 +32,7 @@ public class WebDataExtractor {
         try {
             doc = Jsoup.connect(url)
                        .get();
+
             webData.setUrl(url);
             LOG.info("extracted document Data");
             String title = doc.title();
@@ -85,8 +86,7 @@ public class WebDataExtractor {
                     webLink.setUrl(i.attr("href"));
                 } else {
                     LOG.info("Extracting URLs");
-                    webLink.setUrl(url.concat("/")
-                                      .concat(i.attr("href")));
+                    webLink.setUrl(url.concat(i.attr("href")));
                 }
                 LOG.info("Adding WebLink to Set");
                 webLinks.add(webLink);
