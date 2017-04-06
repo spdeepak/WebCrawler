@@ -53,16 +53,17 @@ public class WebCrawler {
         }
     }
 
-    public void extract(String url) {
-        if (webDataRepository.findByUrl(url) == null) {
+    public void extract(final String url) {
+        if (webDataRepository.findByUrl(url)
+                             .isEmpty()) {
             WebData webData = webDataExtractor.extract(url);
             webDataRepository.save(webData);
-            deleteWebLinkAfterWebDataExtraction(url);
-            continueExtraction();
         }
+        deleteWebLinkAfterWebDataExtraction(url);
+        continueExtraction();
     }
 
-    public void deleteWebLinkAfterWebDataExtraction(String url) {
+    public void deleteWebLinkAfterWebDataExtraction(final String url) {
         List<WebLink> webLinks = webLinkRepository.findByUrl(url);
         if (!webLinks.isEmpty()) {
             webLinkRepository.delete(webLinks);

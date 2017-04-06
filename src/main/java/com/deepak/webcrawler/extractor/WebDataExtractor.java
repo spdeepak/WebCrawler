@@ -6,8 +6,10 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.apache.commons.validator.routines.UrlValidator;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,7 +28,7 @@ public class WebDataExtractor {
     @Autowired
     private WebLinkRepository webLinkRepository;
 
-    public WebData extract(String url) {
+    public WebData extract(final String url) {
         WebData webData = new WebData();
         Document doc;
         try {
@@ -49,7 +51,7 @@ public class WebDataExtractor {
         return webData;
     }
 
-    private WebData fetchMetaData(WebData webData, Document doc) {
+    private WebData fetchMetaData(WebData webData, final Document doc) {
         Elements meta = doc.select("meta[name]");
         meta.forEach((i) ->
             {
@@ -70,27 +72,45 @@ public class WebDataExtractor {
         return webData;
     }
 
-    private void fetchLinks(String url, WebData webData, Document doc) {
+    private void fetchLinks(final String url, WebData webData, final Document doc) {
         Elements links = doc.select("a[href]");
         Set<WebLink> webLinks = new HashSet<>();
-        links.forEach((i) ->
-            {
-                WebLink webLink = new WebLink();
-                if (i.attr("href")
-                     .contains(url)) {
-                    LOG.info("Extracting URLs");
-                    webLink.setUrl(i.attr("href"));
-                } else if (i.attr("href")
-                            .contains("http:")) {
-                    LOG.info("Extracting URLs");
-                    webLink.setUrl(i.attr("href"));
-                } else {
-                    LOG.info("Extracting URLs");
-                    webLink.setUrl(url.concat(i.attr("href")));
-                }
-                LOG.info("Adding WebLink to Set");
-                webLinks.add(webLink);
-            });
+        UrlValidator validate = new UrlValidator();
+        links.forEach(link -> createWebLink(url, webLinks, validate, link));
         webData.setWebLinks(webLinks);
+    }
+
+    public void createWebLink(final String url, Set<WebLink> webLinks, UrlValidator validate, final Element element) {
+        WebLink webLink = new WebLink();
+        if (validateElementAnchorHref(element)) {
+            if (element.attr("href")
+                       .contains(url)) {
+                validateAndSetWebLinkUrl(validate, element, webLink);
+            } else if (element.attr("href")
+                              .contains("http:")) {
+                validateAndSetWebLinkUrl(validate, element, webLink);
+            } else {
+                LOG.info("Extracted URL: " + url.concat(element.attr("href")));
+                webLink.setUrl(url.concat(element.attr("href")));
+            }
+        }
+        LOG.info("Adding WebLink to Set");
+        webLinks.add(webLink);
+    }
+
+    public boolean validateElementAnchorHref(final Element i) {
+        return i.attr("href") != null && !i.attr("href")
+                                           .trim()
+                                           .isEmpty()
+                && !i.attr("href")
+                     .trim()
+                     .equals("/");
+    }
+
+    private void validateAndSetWebLinkUrl(UrlValidator validate, Element element, WebLink webLink) {
+        if (validate.isValid(element.attr("href"))) {
+            LOG.info("Extracted URL: " + element.attr("href"));
+            webLink.setUrl(element.attr("href"));
+        }
     }
 }
