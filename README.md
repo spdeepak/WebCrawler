@@ -1,4 +1,4 @@
-#WebCrawler
+WebCrawler
 
 How to start the Application?
 
