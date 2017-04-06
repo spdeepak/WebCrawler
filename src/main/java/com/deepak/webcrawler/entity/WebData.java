@@ -10,6 +10,8 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
 import javax.persistence.OneToMany;
 
 @Entity
@@ -24,12 +26,14 @@ public class WebData {
 
     private String title;
 
+    @Lob
     private String metaDataDescription;
 
     @ElementCollection(fetch = FetchType.EAGER)
     private Set<String> metDataKeyWords = new HashSet<>();
 
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    @JoinColumn
     private Set<WebLink> webLinks = new HashSet<>();
 
     public long getId() {
