@@ -10,7 +10,7 @@ import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import com.deepak.webcrawler.entity.WebLink;
+import com.deepak.webcrawler.entity.WebData;
 
 /**
  * @author Deepak
@@ -18,22 +18,24 @@ import com.deepak.webcrawler.entity.WebLink;
  */
 @RunWith(SpringRunner.class)
 @SpringBootTest
-public class WebLinkRepositoryTest {
+public class WebDataRepositoryTest {
 
     @Resource
-    private WebLinkRepository webLinkRepository;
+    private WebDataRepository webDataRepository;
 
     @Before
     public void addData() {
-        webLinkRepository.save(new WebLink("https://www.nngroup.com"));
+        WebData webData = new WebData();
+        webData.setUrl("https://www.nngroup.com");
+        webDataRepository.save(webData);
+        webData = new WebData();
+        webData.setUrl("https://www.google.com");
+        webDataRepository.save(webData);
     }
 
     @Test
-    public void testFindByUrlContains() {
-        assertEquals(1, webLinkRepository.findByUrlContains("nngroup.com")
-                                         .size());
-        assertEquals(1, webLinkRepository.findByUrl("https://www.nngroup.com")
+    public void testFindByUrl() {
+        assertEquals(1, webDataRepository.findByUrl("https://www.nngroup.com")
                                          .size());
     }
-
 }

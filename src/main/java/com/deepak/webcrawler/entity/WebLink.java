@@ -13,6 +13,13 @@ public class WebLink {
 
     private String url;
 
+    public WebLink() {
+    }
+
+    public WebLink(String url) {
+        this.url = url;
+    }
+
     public long getId() {
         return id;
     }

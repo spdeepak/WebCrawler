@@ -16,4 +16,6 @@ public interface WebLinkRepository extends JpaRepository<WebLink, Long> {
 
     List<WebLink> findByUrl(String url);
 
+    List<WebLink> findByUrlContains(String url);
+
 }

@@ -15,4 +15,5 @@ import com.deepak.webcrawler.entity.WebData;
 public interface WebDataRepository extends JpaRepository<WebData, Long> {
 
     public List<WebData> findByUrl(String url);
+
 }

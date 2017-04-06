@@ -13,10 +13,12 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 
 import com.deepak.webcrawler.entity.WebData;
 import com.deepak.webcrawler.entity.WebLink;
+import com.deepak.webcrawler.repository.WebLinkRepository;
 
 /**
  * @author Deepak
@@ -27,6 +29,9 @@ public class WebDataExtractor {
 
     private static final Logger LOG = LoggerFactory.getLogger(WebDataExtractor.class);
 
+    @Autowired
+    private WebLinkRepository webLinkRepository;
+
     public WebData extract(final String url) {
         WebData webData = null;
         Document doc;
@@ -34,7 +39,6 @@ public class WebDataExtractor {
             webData = new WebData();
             doc = Jsoup.connect(url)
                        .get();
-
             webData.setUrl(url);
             LOG.info("extracted document Data");
             String title = doc.title();
@@ -99,8 +103,20 @@ public class WebDataExtractor {
         }
     }
 
-    private void addWebLinkToWebDatasWebLinks(Set<WebLink> webLinks, final WebLink webLink) {
+    public void addWebLinkToWebDatasWebLinks(Set<WebLink> webLinks, final WebLink webLink) {
         LOG.info("Adding WebLink: " + webLink.getUrl());
+        if (webLink.getUrl()
+                   .trim()
+                   .endsWith("/")) {
+            int len = webLink.getUrl()
+                             .length()
+                    - 1;
+            if (!webLinkRepository.findByUrl(webLink.getUrl()
+                                                    .substring(0, len))
+                                  .isEmpty()) {
+                webLinks.add(webLink);
+            }
+        }
         webLinks.add(webLink);
     }
 
