@@ -3,6 +3,7 @@ package com.deepak.webcrawler.repository;
 import static org.junit.Assert.assertEquals;
 
 import javax.annotation.Resource;
+import javax.transaction.Transactional;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -18,6 +19,7 @@ import com.deepak.webcrawler.entity.WebData;
  */
 @RunWith(SpringRunner.class)
 @SpringBootTest
+@Transactional
 public class WebDataRepositoryTest {
 
     @Resource

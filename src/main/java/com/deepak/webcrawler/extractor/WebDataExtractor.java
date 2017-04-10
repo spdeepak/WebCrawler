@@ -57,31 +57,34 @@ public class WebDataExtractor {
 
     private WebData fetchMetaData(WebData webData, final Document doc) {
         Elements meta = doc.select("meta[name]");
-        meta.forEach((i) ->
-            {
-                if (i.attr("name")
-                     .equalsIgnoreCase("description")) {
-                    LOG.info("Extracting Meta Data Description");
-                    webData.setMetaDataDescription(i.attr("content"));
-                } else if (i.attr("name")
-                            .equalsIgnoreCase("keywords")) {
-                    String[] keys = i.attr("content")
-                                     .split(",");
-                    LOG.info("Extracting Meta Data Keywords");
-                    webData.setMetDataKeyWords(Arrays.stream(keys)
-                                                     .map(j -> j = j.trim())
-                                                     .collect(Collectors.toSet()));
-                }
-            });
+        meta.parallelStream()
+            .forEach((i) ->
+                {
+                    if (i.attr("name")
+                         .equalsIgnoreCase("description")) {
+                        LOG.info("Extracting Meta Data Description");
+                        webData.setMetaDataDescription(i.attr("content"));
+                    } else if (i.attr("name")
+                                .equalsIgnoreCase("keywords")) {
+                        String[] keys = i.attr("content")
+                                         .split(",");
+                        LOG.info("Extracting Meta Data Keywords");
+                        webData.setMetDataKeyWords(Arrays.stream(keys)
+                                                         .map(j -> j = j.trim())
+                                                         .collect(Collectors.toSet()));
+                    }
+                });
         return webData;
     }
 
-    private void fetchLinks(final String url, WebData webData, final Document doc) {
+    public WebData fetchLinks(final String url, WebData webData, final Document doc) {
         Elements links = doc.select("a[href]");
         Set<WebLink> webLinks = new HashSet<>();
         UrlValidator validate = new UrlValidator();
-        links.forEach(link -> createWebLink(url, webLinks, validate, link));
+        links.parallelStream()
+             .forEach(link -> createWebLink(url, webLinks, validate, link));
         webData.setWebLinks(webLinks);
+        return webData;
     }
 
     private void createWebLink(final String url, Set<WebLink> webLinks, UrlValidator validate, final Element element) {

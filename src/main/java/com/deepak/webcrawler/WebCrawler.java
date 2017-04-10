@@ -6,7 +6,6 @@ import java.util.Scanner;
 import org.apache.commons.validator.routines.UrlValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.scheduling.annotation.Async;
 
 import com.deepak.webcrawler.entity.WebData;
 import com.deepak.webcrawler.entity.WebLink;
@@ -37,7 +36,6 @@ public class WebCrawler {
                                 .isEmpty();
     }
 
-    @Async
     public void start() {
         if (findWebLinksToCrawl()) {
             Scanner scanner = new Scanner(System.in);
