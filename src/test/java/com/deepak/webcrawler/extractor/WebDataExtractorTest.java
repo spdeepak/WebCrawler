@@ -5,6 +5,8 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.annotation.Resource;
 import javax.transaction.Transactional;
@@ -17,6 +19,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import com.deepak.webcrawler.entity.WebData;
+import com.deepak.webcrawler.entity.WebLink;
 
 /**
  * @author Deepak
@@ -51,7 +54,6 @@ public class WebDataExtractorTest {
     }
 
     @Test
-
     public void testFetchLinks() throws IOException {
         String url = "http://www.github.com";
         WebData webData = new WebData();
@@ -60,6 +62,15 @@ public class WebDataExtractorTest {
         webDataExtractor.fetchLinks(url, webData, doc);
         assertEquals(51, webData.getWebLinks()
                                 .size());
+    }
+
+    @Test
+    public void testAddWebLinkToWebDatasWebLinks() {
+        WebLink webLink = new WebLink();
+        webLink.setUrl("http:www.github.com");
+        Set<WebLink> webLinks = new HashSet();
+        webDataExtractor.addWebLinkToWebDatasWebLinks(webLinks, webLink);
+        assertEquals(1, webLinks.size());
     }
 
 }

@@ -32,6 +32,8 @@ public class WebDataExtractor {
     @Autowired
     private WebLinkRepository webLinkRepository;
 
+    private UrlValidator validate = new UrlValidator();
+
     public WebData extract(final String url) {
         WebData webData = null;
         Document doc;
@@ -82,21 +84,21 @@ public class WebDataExtractor {
         Set<WebLink> webLinks = new HashSet<>();
         UrlValidator validate = new UrlValidator();
         links.parallelStream()
-             .forEach(link -> createWebLink(url, webLinks, validate, link));
+             .forEach(link -> createWebLink(url, webLinks, link));
         webData.setWebLinks(webLinks);
         return webData;
     }
 
-    private void createWebLink(final String url, Set<WebLink> webLinks, UrlValidator validate, final Element element) {
+    private void createWebLink(final String url, Set<WebLink> webLinks, final Element element) {
         WebLink webLink = new WebLink();
         if (validateElementAnchorHref(element.attr("href"))) {
             if (element.attr("href")
                        .contains(url)) {
-                validateAndSetWebLinkUrl(validate, element, webLink);
+                validateAndSetWebLinkUrl(element, webLink);
                 addWebLinkToWebDatasWebLinks(webLinks, webLink);
             } else if (element.attr("href")
                               .contains("http:")) {
-                validateAndSetWebLinkUrl(validate, element, webLink);
+                validateAndSetWebLinkUrl(element, webLink);
                 addWebLinkToWebDatasWebLinks(webLinks, webLink);
             } else {
                 LOG.info("Extracted URL: " + url.concat(element.attr("href")));
@@ -132,7 +134,7 @@ public class WebDataExtractor {
                         .startsWith("javascript:");
     }
 
-    private void validateAndSetWebLinkUrl(UrlValidator validate, Element element, WebLink webLink) {
+    private void validateAndSetWebLinkUrl(Element element, WebLink webLink) {
         if (validate.isValid(element.attr("href"))) {
             LOG.info("Extracted URL: " + element.attr("href"));
             webLink.setUrl(element.attr("href"));
